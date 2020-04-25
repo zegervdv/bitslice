@@ -19,11 +19,33 @@ class Bitslice:
         ...
         ValueError: A value of 7 cannot be represented in 2 bits
 
+        Get the size of a Bitslice:
+        >>> val = Bitslice(4, size=8)
+        >>> len(val)
+        8
+
+        For undetermined sizes, the minimal number of bits needed is used
+        >>> val = Bitslice(4)
+        >>> len(val)
+        3
+
 
         Bitslices allow slicing of sub-values from the value.
         >>> val = Bitslice(0xCAFEBABE)
         >>> val[7:0]
         0x00BE (190)
+
+        Or a single bit:
+        >>> val[3]
+        0x0001 (1)
+
+        Assign new values to bits or slices:
+        >>> val[3] = 0
+        >>> val
+        0xCAFEBAB6 (3405691574)
+        >>> val[7:0] = 4
+        >>> val
+        0xCAFEBA04 (3405691396)
     """
 
     def __init__(self, value: int, size: int = None):
@@ -36,9 +58,28 @@ class Bitslice:
     def __repr__(self):
         return f"0x{self.value:04X} ({self.value})"
 
-    def __getitem__(self, key):
+    def __len__(self):
+        if self.size is not None:
+            return self.size
+        else:
+            return self.value.bit_length()
+
+    def _mask_shift_size(self, key):
         if isinstance(key, slice):
             mask = ((1 << (key.start - key.stop) + 1) - 1) << key.stop
-            return Bitslice(
-                (self.value & mask) >> key.stop, size=(key.start - key.stop) + 1
-            )
+            size = (key.start - key.stop) + 1
+            shift = key.stop
+        elif isinstance(key, int):
+            mask = 1 << key
+            size = 1
+            shift = key
+        return mask, shift, size
+
+    def __getitem__(self, key):
+        mask, shift, size = self._mask_shift_size(key)
+        return Bitslice((self.value & mask) >> shift, size=size)
+
+    def __setitem__(self, key, value):
+        mask, shift, size = self._mask_shift_size(key)
+        mask_value = self.value & (mask ^ ((1 << len(self)) - 1))
+        self.value = mask_value | (value << shift) & mask
