@@ -46,6 +46,60 @@ class Bitslice:
         >>> val[7:0] = 4
         >>> val
         0xCAFEBA04 (3405691396)
+
+
+        Operators:
+        >>> val1 = Bitslice(7)
+        >>> val2 = Bitslice(12)
+        >>> val1 + val2
+        0x0013 (19)
+        >>> val1 + 4
+        0x000B (11)
+
+        >>> val2 - val1
+        0x0005 (5)
+        >>> val2 - 3
+        0x0009 (9)
+
+        >>> val2 * val1
+        0x0054 (84)
+        >>> val2 * 2
+        0x0018 (24)
+
+        >>> val2 / 2
+        0x0006 (6)
+        >>> val1 / 2
+        0x0003 (3)
+        >>> val1 // 3
+        0x0002 (2)
+
+        >>> val1 & val2
+        0x0004 (4)
+        >>> val1 & 0x1
+        0x0001 (1)
+
+        >>> val2 | val1
+        0x000F (15)
+        >>> val2 | 1
+        0x000D (13)
+
+        >>> val1 ^ val2
+        0x000B (11)
+        >>> val1 ^ 9
+        0x000E (14)
+
+        >>> val1 << 2
+        0x001C (28)
+        >>> val2 >> 1
+        0x0006 (6)
+
+        >>> ~val2
+        0x0003 (3)
+        >>> ~Bitslice(2, size=8)
+        0x00FD (253)
+
+
+
     """
 
     def __init__(self, value: int, size: int = None):
@@ -63,6 +117,9 @@ class Bitslice:
             return self.size
         else:
             return self.value.bit_length()
+
+    def __int__(self):
+        return self.value
 
     def _mask_shift_size(self, key):
         if isinstance(key, slice):
@@ -83,3 +140,37 @@ class Bitslice:
         mask, shift, size = self._mask_shift_size(key)
         mask_value = self.value & (mask ^ ((1 << len(self)) - 1))
         self.value = mask_value | (value << shift) & mask
+
+    def __add__(self, value):
+        return Bitslice(int(self) + int(value))
+
+    def __sub__(self, value):
+        return Bitslice(int(self) - int(value))
+
+    def __mul__(self, value):
+        return Bitslice(int(self) * int(value))
+
+    def __truediv__(self, value):
+        return Bitslice(int(self) // int(value))
+
+    def __floordiv__(self, value):
+        return Bitslice(int(self) // int(value))
+
+    def __and__(self, value):
+        return Bitslice(int(self) & int(value))
+
+    def __or__(self, value):
+        return Bitslice(int(self) | int(value))
+
+    def __xor__(self, value):
+        return Bitslice(int(self) ^ int(value))
+
+    def __lshift__(self, value):
+        return Bitslice(int(self) << int(value))
+
+    def __rshift__(self, value):
+        return Bitslice(int(self) >> int(value))
+
+    def __invert__(self):
+        mask = (1 << len(self)) - 1
+        return Bitslice(int(self) ^ mask)
