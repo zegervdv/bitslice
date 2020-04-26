@@ -1,8 +1,10 @@
 [tool.poetry]
 name = "bitslice"
 version = "0.1.0"
-description = ""
-authors = ["zegervdv <zegervdv@me.com>"]
+description = "Verilog-like bitvector slicing"
+authors = ["Zeger Van de Vannet <zegervdv@me.com>"]
+license = "MIT"
+homepage = "https://github.com/zegervdv/bitslice"
 
 [tool.poetry.dependencies]
 python = "^3.7"
