@@ -18,6 +18,10 @@ class Bitslice:
         Traceback (most recent call last):
         ...
         ValueError: A value of 7 cannot be represented in 2 bits
+        >>> Bitslice(8, size=3)
+        Traceback (most recent call last):
+        ...
+        ValueError: A value of 8 cannot be represented in 3 bits
 
         Get the size of a Bitslice:
         >>> val = Bitslice(4, size=8)
@@ -49,8 +53,8 @@ class Bitslice:
 
 
         Operators:
-        >>> val1 = Bitslice(7)
-        >>> val2 = Bitslice(12)
+        >>> val1 = Bitslice(7, size=8)
+        >>> val2 = Bitslice(12, size=8)
         >>> val1 + val2
         0x0013 (19)
         >>> val1 + 4
@@ -93,12 +97,81 @@ class Bitslice:
         >>> val2 >> 1
         0x0006 (6)
 
-        >>> ~val2
+        >>> ~Bitslice(12)
         0x0003 (3)
         >>> ~Bitslice(2, size=8)
         0x00FD (253)
 
+        In-place operators
+        >>> val = Bitslice(4, size=8)
+        >>> val += 5
+        >>> val
+        0x0009 (9)
+        >>> val -= 3
+        >>> val
+        0x0006 (6)
+        >>> val *= 2
+        >>> val
+        0x000C (12)
+        >>> val /= 4
+        >>> val
+        0x0003 (3)
+        >>> val ^= 0xF
+        >>> val
+        0x000C (12)
+        >>> val &= 4
+        >>> val
+        0x0004 (4)
+        >>> val |= 8
+        >>> val
+        0x000C (12)
+        >>> val <<= 2
+        >>> val
+        0x0030 (48)
+        >>> val >>= 1
+        >>> val
+        0x0018 (24)
 
+        >>> val = Bitslice(6)
+        >>> val += 1
+        >>> val
+        0x0007 (7)
+        >>> val += 1
+        Traceback (most recent call last):
+        ...
+        ValueError: A value of 8 cannot be represented in 3 bits
+
+
+        Using Bitslices in expressions:
+        >>> val = Bitslice(4, size=8)
+
+        Cast to int:
+        >>> int(val)
+        4
+
+        Behaves as int in expressions:
+        >>> 7 + val
+        11
+        >>> 8.1 + val
+        12.1
+        >>> 4 - val
+        0
+        >>> 5 * val
+        20
+        >>> 10 / val
+        2.5
+        >>> 10 // val
+        2
+        >>> 10 & val
+        0
+        >>> 10 | val
+        14
+        >>> 10 ^ val
+        14
+        >>> 10 << val
+        160
+        >>> 10 >> val
+        0
 
     """
 
@@ -106,7 +179,7 @@ class Bitslice:
         self.value = value
         self.size = size
 
-        if size is not None and value > (1 << size):
+        if size is not None and value > (1 << size) - 1:
             raise ValueError(f"A value of {value} cannot be represented in {size} bits")
 
     def __repr__(self):
@@ -142,35 +215,65 @@ class Bitslice:
         self.value = mask_value | (value << shift) & mask
 
     def __add__(self, value):
-        return Bitslice(int(self) + int(value))
+        return Bitslice(int(self) + int(value), size=len(self))
+
+    def __radd__(self, value):
+        return value + int(self)
 
     def __sub__(self, value):
-        return Bitslice(int(self) - int(value))
+        return Bitslice(int(self) - int(value), size=len(self))
+
+    def __rsub__(self, value):
+        return value - int(self)
 
     def __mul__(self, value):
-        return Bitslice(int(self) * int(value))
+        return Bitslice(int(self) * int(value), size=len(self))
+
+    def __rmul__(self, value):
+        return value * int(self)
 
     def __truediv__(self, value):
-        return Bitslice(int(self) // int(value))
+        return Bitslice(int(self) // int(value), size=len(self))
+
+    def __rtruediv__(self, value):
+        return value / int(self)
 
     def __floordiv__(self, value):
-        return Bitslice(int(self) // int(value))
+        return Bitslice(int(self) // int(value), size=len(self))
+
+    def __rfloordiv__(self, value):
+        return value // int(self)
 
     def __and__(self, value):
-        return Bitslice(int(self) & int(value))
+        return Bitslice(int(self) & int(value), size=len(self))
+
+    def __rand__(self, value):
+        return value & int(self)
 
     def __or__(self, value):
-        return Bitslice(int(self) | int(value))
+        return Bitslice(int(self) | int(value), size=len(self))
+
+    def __ror__(self, value):
+        return value | int(self)
 
     def __xor__(self, value):
-        return Bitslice(int(self) ^ int(value))
+        return Bitslice(int(self) ^ int(value), size=len(self))
+
+    def __rxor__(self, value):
+        return value ^ int(self)
 
     def __lshift__(self, value):
-        return Bitslice(int(self) << int(value))
+        return Bitslice(int(self) << int(value), size=len(self))
+
+    def __rlshift__(self, value):
+        return value << int(self)
 
     def __rshift__(self, value):
-        return Bitslice(int(self) >> int(value))
+        return Bitslice(int(self) >> int(value), size=len(self))
+
+    def __rrshift__(self, value):
+        return value >> int(self)
 
     def __invert__(self):
         mask = (1 << len(self)) - 1
-        return Bitslice(int(self) ^ mask)
+        return Bitslice(int(self) ^ mask, size=len(self))
