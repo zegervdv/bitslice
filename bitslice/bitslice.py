@@ -178,10 +178,10 @@ class Bitslice(Integral):
     """
 
     def __init__(self, value: int, size: int = None):
-        self.value = value
+        self.value = int(value)
         self.size = size
 
-        if size is not None and value > (1 << size) - 1:
+        if size is not None and int(value) > (1 << size) - 1:
             raise ValueError(f"A value of {value} cannot be represented in {size} bits")
 
     def __repr__(self):
