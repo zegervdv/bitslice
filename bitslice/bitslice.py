@@ -1,9 +1,11 @@
 """ Bitslice
     VHDL/Verilog-like bit slicing of integer values.
 """
+from numbers import Integral
+from math import ceil, floor, trunc
 
 
-class Bitslice:
+class Bitslice(Integral):
     """ A Bitslice can be created with a value:
         >>> Bitslice(7)
         0x0007 (7)
@@ -277,3 +279,45 @@ class Bitslice:
     def __invert__(self):
         mask = (1 << len(self)) - 1
         return Bitslice(int(self) ^ mask, size=len(self))
+
+    def __abs__(self):
+        return Bitslice(abs(int(self)), size=len(self))
+    
+    def __ceil__(self):
+        return Bitslice(ceil(int(self)), size=len(self))
+
+    def __floor__(self):
+        return Bitslice(floor(int(self)), size=len(self))
+
+    def __eq__(self, other):
+        return int(self) == other
+
+    def __le__(self, other):
+        return int(self) <= other
+
+    def __lt__(self, other):
+        return int(self) < other
+
+    def __mod__(self, other):
+        return Bitslice(int(self) % other, size=len(self))
+
+    def __rmod__(self, other):
+        return Bitslice(other % int(self), size=len(self))
+
+    def __neg__(self):
+        return Bitslice(- int(self), size=len(self))
+
+    def __pos__(self):
+        return Bitslice(+ int(self), size=len(self))
+
+    def __pow__(self, other, modulo=None):
+        return Bitslice(pow(int(self), other, modulo), size=len(self))
+
+    def __rpow__(self, other, modulo=None):
+        return Bitslice(pow(other, int(self), modulo), size=len(self))
+
+    def __round__(self):
+        return int(self)
+
+    def __trunc__(self, ndigits):
+        return trunc(int(self), ndigits)
