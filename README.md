@@ -21,4 +21,4 @@ value = Bitslice(5, size=4)
 value[3:1] - 1
 ~~~
 
-See [bitslice.py](https://github.com/zegervdv/bitslice/bitslice/bitslice.py) for more examples.
+See [bitslice.py](https://github.com/zegervdv/bitslice/blob/master/bitslice/bitslice.py) for more examples.
