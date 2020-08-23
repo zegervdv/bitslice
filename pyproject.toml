@@ -5,7 +5,7 @@ description = "Verilog-like bitvector slicing"
 authors = ["Zeger Van de Vannet <zegervdv@me.com>"]
 license = "MIT"
 homepage = "https://github.com/zegervdv/bitslice"
-readme = README.md
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.7"
