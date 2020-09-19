@@ -175,6 +175,12 @@ class Bitslice(Integral):
         >>> 10 >> val
         0
 
+        >>> a = Bitslice(14)
+        >>> b = Bitslice(4)
+        >>> b[5] = a[3]
+        >>> b
+        0x0024 (36)
+
     """
 
     def __init__(self, value: int, size: int = None):
@@ -214,7 +220,7 @@ class Bitslice(Integral):
     def __setitem__(self, key, value):
         mask, shift, size = self._mask_shift_size(key)
         mask_value = self.value & (mask ^ ((1 << len(self)) - 1))
-        self.value = mask_value | (value << shift) & mask
+        self.value = mask_value | (int(value) << shift) & mask
 
     def __add__(self, value):
         return Bitslice(int(self) + int(value), size=len(self))
