@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bitslice"
-version = "0.2.1"
+version = "0.2.2"
 description = "Verilog-like bitvector slicing"
 authors = ["Zeger Van de Vannet <zegervdv@me.com>"]
 license = "MIT"
