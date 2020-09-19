@@ -181,6 +181,15 @@ class Bitslice(Integral):
         >>> b
         0x0024 (36)
 
+        Formatting as ints:
+        >>> a = Bitslice(14)
+        >>> print(f"{a}")
+        14
+        >>> print(f"{a:08X}")
+        0000000E
+        >>> print(f"{a:09_X}")
+        0000_000E
+
     """
 
     def __init__(self, value: int, size: int = None):
@@ -192,6 +201,9 @@ class Bitslice(Integral):
 
     def __repr__(self):
         return f"0x{self.value:04X} ({self.value})"
+
+    def __format__(self, format_spec):
+        return int.__format__(self.value, format_spec)
 
     def __len__(self):
         if self.size is not None:
