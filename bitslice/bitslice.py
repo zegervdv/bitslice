@@ -227,7 +227,7 @@ class Bitslice(Integral):
 
     def __getitem__(self, key):
         mask, shift, size = self._mask_shift_size(key)
-        return Bitslice((self.value & mask) >> shift, size=size)
+        return self.__class__((self.value & mask) >> shift, size=size)
 
     def __setitem__(self, key, value):
         mask, shift, size = self._mask_shift_size(key)
@@ -235,77 +235,77 @@ class Bitslice(Integral):
         self.value = mask_value | (int(value) << shift) & mask
 
     def __add__(self, value):
-        return Bitslice(int(self) + int(value), size=len(self))
+        return self.__class__(int(self) + int(value), size=len(self))
 
     def __radd__(self, value):
         return value + int(self)
 
     def __sub__(self, value):
-        return Bitslice(int(self) - int(value), size=len(self))
+        return self.__class__(int(self) - int(value), size=len(self))
 
     def __rsub__(self, value):
         return value - int(self)
 
     def __mul__(self, value):
-        return Bitslice(int(self) * int(value), size=len(self))
+        return self.__class__(int(self) * int(value), size=len(self))
 
     def __rmul__(self, value):
         return value * int(self)
 
     def __truediv__(self, value):
-        return Bitslice(int(self) // int(value), size=len(self))
+        return self.__class__(int(self) // int(value), size=len(self))
 
     def __rtruediv__(self, value):
         return value / int(self)
 
     def __floordiv__(self, value):
-        return Bitslice(int(self) // int(value), size=len(self))
+        return self.__class__(int(self) // int(value), size=len(self))
 
     def __rfloordiv__(self, value):
         return value // int(self)
 
     def __and__(self, value):
-        return Bitslice(int(self) & int(value), size=len(self))
+        return self.__class__(int(self) & int(value), size=len(self))
 
     def __rand__(self, value):
         return value & int(self)
 
     def __or__(self, value):
-        return Bitslice(int(self) | int(value), size=len(self))
+        return self.__class__(int(self) | int(value), size=len(self))
 
     def __ror__(self, value):
         return value | int(self)
 
     def __xor__(self, value):
-        return Bitslice(int(self) ^ int(value), size=len(self))
+        return self.__class__(int(self) ^ int(value), size=len(self))
 
     def __rxor__(self, value):
         return value ^ int(self)
 
     def __lshift__(self, value):
-        return Bitslice(int(self) << int(value), size=len(self))
+        return self.__class__(int(self) << int(value), size=len(self))
 
     def __rlshift__(self, value):
         return value << int(self)
 
     def __rshift__(self, value):
-        return Bitslice(int(self) >> int(value), size=len(self))
+        return self.__class__(int(self) >> int(value), size=len(self))
 
     def __rrshift__(self, value):
         return value >> int(self)
 
     def __invert__(self):
         mask = (1 << len(self)) - 1
-        return Bitslice(int(self) ^ mask, size=len(self))
+        return self.__class__(int(self) ^ mask, size=len(self))
 
     def __abs__(self):
-        return Bitslice(abs(int(self)), size=len(self))
+        return self.__class__(abs(int(self)), size=len(self))
     
     def __ceil__(self):
-        return Bitslice(ceil(int(self)), size=len(self))
+        return self.__class__(ceil(int(self)), size=len(self))
 
     def __floor__(self):
-        return Bitslice(floor(int(self)), size=len(self))
+        return self.__class__(floor(int(self)), size=len(self))
 
     def __eq__(self, other):
         return int(self) == other
@@ -317,22 +317,22 @@ class Bitslice(Integral):
         return int(self) < other
 
     def __mod__(self, other):
-        return Bitslice(int(self) % other, size=len(self))
+        return self.__class__(int(self) % other, size=len(self))
 
     def __rmod__(self, other):
-        return Bitslice(other % int(self), size=len(self))
+        return self.__class__(other % int(self), size=len(self))
 
     def __neg__(self):
-        return Bitslice(- int(self), size=len(self))
+        return self.__class__(- int(self), size=len(self))
 
     def __pos__(self):
-        return Bitslice(+ int(self), size=len(self))
+        return self.__class__(+ int(self), size=len(self))
 
     def __pow__(self, other, modulo=None):
-        return Bitslice(pow(int(self), other, modulo), size=len(self))
+        return self.__class__(pow(int(self), other, modulo), size=len(self))
 
     def __rpow__(self, other, modulo=None):
-        return Bitslice(pow(other, int(self), modulo), size=len(self))
+        return self.__class__(pow(other, int(self), modulo), size=len(self))
 
     def __round__(self):
         return int(self)
