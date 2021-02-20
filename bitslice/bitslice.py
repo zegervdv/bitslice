@@ -203,6 +203,14 @@ class Bitslice(Integral):
         >>> a
         0x007F (-1)
 
+        Resize a number
+        >>> a = Bitslice(-2, size=3)
+        >>> a
+        0x0006 (-2)
+        >>> b = a.resize(5)
+        >>> b
+        0x001E (-2)
+
     """
 
     def __init__(self, value: int, size: int = None, signed: bool = False):
@@ -241,9 +249,12 @@ class Bitslice(Integral):
     @property
     def signed(self):
         if self[self.size-1] == 1:
-            return -1
+            return self.value - (1 << self.size)
         else:
             return int(self)
+
+    def resize(self, size):
+        return self.__class__(self.signed, size=size)
 
     def _mask_shift_size(self, key):
         if isinstance(key, slice):
