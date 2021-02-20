@@ -210,6 +210,8 @@ class Bitslice(Integral):
         self.value = int(value)
         if self.value < 0:
             self._signed = True
+            if size is None:
+                raise ValueError("Size must be set when the value is signed")
         self.size = size
 
         if size is not None and int(value) > (1 << size) - 1:
