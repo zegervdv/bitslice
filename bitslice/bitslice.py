@@ -190,17 +190,39 @@ class Bitslice(Integral):
         >>> print(f"{a:09_X}")
         0000_000E
 
+        Convert to unsigned integers
+        >>> a = Bitslice(127, size=7)
+        >>> int(a)
+        127
+
+        And signed integers
+        >>> a.signed
+        -1
+
+        >>> a = Bitslice(-1, size=7)
+        >>> a
+        0x007F (-1)
+
     """
 
-    def __init__(self, value: int, size: int = None):
+    def __init__(self, value: int, size: int = None, signed: bool = False):
+        self._signed = signed
         self.value = int(value)
+        if self.value < 0:
+            self._signed = True
         self.size = size
 
         if size is not None and int(value) > (1 << size) - 1:
             raise ValueError(f"A value of {value} cannot be represented in {size} bits")
 
+        if self._signed and self.value < 0:
+            self.value = (1 << self.size) + self.value
+
     def __repr__(self):
-        return f"0x{self.value:04X} ({self.value})"
+        val = self.value
+        if self._signed and self[self.size - 1] == 1:
+            val = val - (1 << self.size)
+        return f"0x{self.value:04X} ({val})"
 
     def __format__(self, format_spec):
         return int.__format__(self.value, format_spec)
@@ -213,6 +235,13 @@ class Bitslice(Integral):
 
     def __int__(self):
         return self.value
+
+    @property
+    def signed(self):
+        if self[self.size-1] == 1:
+            return -1
+        else:
+            return int(self)
 
     def _mask_shift_size(self, key):
         if isinstance(key, slice):
