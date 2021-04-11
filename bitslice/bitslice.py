@@ -211,10 +211,33 @@ class Bitslice(Integral):
         >>> b
         0x001E (-2)
 
+        Aliases
+        >>> a = Bitslice(14, size=8)
+        >>> a.add_alias('enable', 0)
+        >>> a.add_alias('oper_a', start=1, end=4)
+        >>> a.add_alias('oper_b', start=5, end=7)
+        >>> a['enable'] == a[0]
+        True
+        >>> a['oper_a'] == a[4:1]
+        True
+        >>> a['oper_b'] == a[7:5]
+        True
+        >>> a[0] == 0
+        True
+        >>> a['enable'] = 1
+        >>> a[0] == 1
+        True
+
+        >>> a['foo']
+        Traceback (most recent call last):
+        ...
+        KeyError: 'foo'
+
     """
 
     def __init__(self, value: int, size: int = None, signed: bool = False):
         self._signed = signed
+        self._aliases = {}
         self.value = int(value)
         if self.value < 0:
             self._signed = True
@@ -256,7 +279,17 @@ class Bitslice(Integral):
     def resize(self, size):
         return self.__class__(self.signed, size=size)
 
+    def add_alias(self, name, start, end=None):
+        if end is not None:
+            val = slice(end, start)
+        else:
+            val = start
+        self._aliases[name] = val
+
     def _mask_shift_size(self, key):
+        if isinstance(key, str):
+            key = self._aliases[key]
+
         if isinstance(key, slice):
             mask = ((1 << (key.start - key.stop) + 1) - 1) << key.stop
             size = (key.start - key.stop) + 1
@@ -342,7 +375,7 @@ class Bitslice(Integral):
 
     def __abs__(self):
         return self.__class__(abs(int(self)), size=len(self))
-    
+
     def __ceil__(self):
         return self.__class__(ceil(int(self)), size=len(self))
 

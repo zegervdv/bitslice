@@ -21,4 +21,12 @@ value = Bitslice(5, size=4)
 value[3:1] - 1
 ~~~
 
+Advanced features: slice aliasing
+~~~ python
+value = Bitslice(5, size=4)
+value.add_alias('lower', start=0, end=1)
+value.add_alias('upper', start=2, end=3)
+
+value['lower'] == value[1:0]
+~~~
 See [bitslice.py](https://github.com/zegervdv/bitslice/blob/master/bitslice/bitslice.py) for more examples.
