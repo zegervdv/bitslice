@@ -13,12 +13,33 @@ pip install bitslice
 Bitslice is designed to behave as an integer value as much as possible.
 All operators defined on `int` should be supported.
 
-Bitslice adds the ability to extract or set one or more bits of the value:
+Bitslice objects use indexing to emulate Verilog-style bit slicing.
 
 ~~~ python
 from bitslice import Bitslice
 value = Bitslice(5, size=4)
-value[3:1] - 1
+
+# Binary: 0b0101
+print(value)
+0x0005 (5)
+
+# Select the lowest bit (index 0, right-most)
+#
+#   index:   3210
+#   value: 0b0101
+print(value[0])
+0x0001 (1)
+
+# Select bits 2 -> 1
+# resulting in 0b10 == 2
+print(value[2:1])
+0x0002 (2)
+
+# Set the upper bit
+value[3] = 1
+# 0b1101
+print(value)
+0x000D (13)
 ~~~
 
 Advanced features: slice aliasing
